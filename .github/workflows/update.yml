@@ -1,4 +1,8 @@
 name: Update M42 arrivals
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 on:
   schedule:
