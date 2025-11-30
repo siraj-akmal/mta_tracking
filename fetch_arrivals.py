@@ -10,7 +10,7 @@ if not API_KEY:
     raise SystemExit("MTA_API_KEY not set in environment")
 
 # Stop and line for eastbound M42 at 11th Ave
-STOP_ID = "MTA_403572"
+STOP_ID = "MTA_403367"
 LINE_REF = "M42"
 
 URL = (
