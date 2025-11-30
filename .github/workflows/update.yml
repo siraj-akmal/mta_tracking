@@ -1,0 +1,40 @@
+name: Update M42 arrivals
+
+on:
+  schedule:
+    - cron: '*/2 * * * *'   # every 5 minutes
+  workflow_dispatch:
+
+permissions:
+  contents: write    # allow committing back to the repo
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run fetch script
+        env:
+          MTA_API_KEY: ${{ secrets.MTA_API_KEY }}
+        run: |
+          python fetch_arrivals.py
+          git status --porcelain
+          git add arrivals.json
+          if git diff --cached --quiet; then
+            echo "No changes to arrivals.json"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Update arrivals.json (automated)"
+            git push
+          fi

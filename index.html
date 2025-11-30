@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>M42 — Eastbound at 11th Ave</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, Roboto, "Segoe UI", Arial; padding: 2rem; }
+    h1 { margin-bottom: .5rem; }
+    #list { font-size: 1.25rem; }
+    .time { margin: .25rem 0; }
+  </style>
+</head>
+<body>
+  <h1>M42 — Eastbound at W 42 St / 11 Ave</h1>
+  <div id="list">Loading…</div>
+
+  <script>
+    async function load() {
+      try {
+        const res = await fetch("arrivals.json", {cache: "no-store"});
+        if (!res.ok) throw new Error("Fetch failed");
+        const data = await res.json();
+        const container = document.getElementById("list");
+        if (!data.length) {
+          container.textContent = "No upcoming arrivals found";
+          return;
+        }
+        container.innerHTML = data.map(d => {
+          const dt = new Date(d.arrival_time);
+          return `<div class="time">${dt.toLocaleString([], {hour: 'numeric', minute: '2-digit', hour12: true})}</div>`;
+        }).join("");
+      } catch (err) {
+        document.getElementById("list").textContent = "Error loading arrivals";
+        console.error(err);
+      }
+    }
+    load();
+    // auto-refresh display every 60s (page will be updated by Actions every ~5m)
+    setInterval(load, 60000);
+  </script>
+</body>
+</html>
